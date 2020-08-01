@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PageDefault from '../../../components/PageDefault';
 import FormField from '../../../components/FormField';
 import Button from '../../../components/Button';
+import useForm from '../../../hooks/useForm';
 
 const CategoryRegistration = () => {
   const initialValues = {
@@ -11,27 +12,17 @@ const CategoryRegistration = () => {
     color: '',
   };
 
-  const [categoryValues, setCategoryValues] = useState(initialValues);
+  const { handleChange, values, clearForm } = useForm(initialValues);
   const [categories, setCategories] = useState([]);
-
-  const handleChange = (e) => {
-    const key = e.target.getAttribute('name');
-    const { value } = e.target;
-
-    setCategoryValues({
-      ...categoryValues,
-      [key]: value, // name: 'valor'
-    });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setCategories([
       ...categories,
-      categoryValues,
+      values,
     ]);
 
-    setCategoryValues(initialValues);
+    clearForm();
   };
 
   useEffect(() => {
@@ -53,17 +44,16 @@ const CategoryRegistration = () => {
     <PageDefault>
       <h1>
         Cadastro de Categoria:
-        {categoryValues.name}
+        {values.name}
       </h1>
 
       <form onSubmit={handleSubmit}>
 
         <FormField
-          tag="input"
           label="Nome da Categoria"
           type="text"
           name="name"
-          value={categoryValues.name}
+          value={values.name}
           onChange={handleChange}
         />
 
@@ -71,7 +61,7 @@ const CategoryRegistration = () => {
           label="Descrição"
           type="textarea"
           name="description"
-          value={categoryValues.description}
+          value={values.description}
           onChange={handleChange}
         />
 
@@ -79,18 +69,18 @@ const CategoryRegistration = () => {
           label="Cor"
           type="color"
           name="color"
-          value={categoryValues.color}
+          value={values.color}
           onChange={handleChange}
         />
 
-        <Button>Cadastrar</Button>
+        <Button type="submit">Cadastrar</Button>
       </form>
 
       {categories.length === 0 && <div>Loading...</div>}
 
       <ul>
-        {categories.map((category, i) => (
-          <li key={i}>
+        {categories.map((category) => (
+          <li key={category.id}>
             {category.name}
           </li>
         ))}
